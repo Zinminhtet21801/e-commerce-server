@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
-const flash = require("connect-flash")
+const flash = require("connect-flash");
 const LocalStrategy = require("passport-local").Strategy;
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,46 +21,7 @@ passport.deserializeUser(function (id, done) {
     done(err, user);
   });
 });
-mongoose.connect(
-  "mongodb+srv://admin:admin@e-commerce.13she.mongodb.net/e-commercedb"
-);
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    required: true,
-    type: String,
-  },
-  password: {
-    required: true,
-    type: String,
-  },
-  comfirmPassword: {
-    required: true,
-    type: String,
-  },
-  gmail: {
-    required: true,
-    type: String,
-  },
-  phone: {
-    required: true,
-    type: String,
-  },
-  city: {
-    required: true,
-    type: String,
-  },
-  postal: {
-    required: true,
-    type: String,
-  },
-  address: {
-    required: true,
-    type: String,
-  },
-});
-
-const User = mongoose.model("user", UserSchema);
 
 // passport.use(new LocalStrategy(function(gmail, password, done){
 //   console.log(gmail);
@@ -95,44 +56,11 @@ passport.use(
   })
 );
 
-app.get("/users", (req, res) => {
-  User.find({}, (err, result) => {
-    res.json(result);
-  });
-});
 
-app.get("/users/:name", (req, res) => {
-  const name = req.params.name;
-  User.findOne({ name: name }, (err, result) => {
-    res.json(result);
-  });
-});
+// routes 
+app.use('/users', require('./routes/users'))
 
-app.post("/signup", (req, res) => {
-  // console.log(req.body);
-  const {
-    name,
-    gmail,
-    password,
-    confirmPassword,
-    phone,
-    city,
-    postal,
-    address,
-  } = req.body;
-  const user = new User({
-    name: name,
-    gmail: gmail,
-    password: password,
-    comfirmPassword: confirmPassword,
-    phone: phone,
-    city: city,
-    postal: postal,
-    address: address,
-  });
-  user.save();
-  res.redirect("http://localhost:3000");
-});
+app.use('/signup', require('./routes/signup'))
 
 // app.post("/login", (req, res) => {
 //   // console.log(req.body);
