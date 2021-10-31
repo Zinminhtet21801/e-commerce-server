@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 mongoose.connect(
     "mongodb+srv://admin:admin@e-commerce.13she.mongodb.net/e-commercedb"
-  );
+);
   
   const UserSchema = new mongoose.Schema({
     name: {

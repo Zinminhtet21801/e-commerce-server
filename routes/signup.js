@@ -4,6 +4,7 @@ const User = require('../config/mongoose');
 const bcrypt = require('bcryptjs');
 
 router.post('/', (req, res) => {
+    console.log(req.body.inputs)
     const {
       name,
       gmail,
@@ -13,7 +14,7 @@ router.post('/', (req, res) => {
       city,
       postal,
       address,
-    } = req.body;
+    } = req.body.inputs;
     const newUser = new User({
       name: name,
       gmail: gmail,
@@ -26,14 +27,15 @@ router.post('/', (req, res) => {
 
     // check validation
     if(password !== comfirmPassword || phone.length != 11) {
-        res.redirect("http://localhost:3000/sign up");
+        res.redirect("http://localhost:3000/signup");
     } else {
         // validated, check user already exists
         User.findOne({gmail: gmail})
             .then(user => {
                 // user exists
                 if(user) {
-                    res.redirect('http://localhost:3000/sign up');
+                    // res.redirect('http://localhost:3000/signup');
+                    res.send("testing user already exists!!!");
                 } else {
                     // user doesn't exist and creating new one
                     bcrypt.genSalt(10, (err, salt) => {
@@ -42,7 +44,7 @@ router.post('/', (req, res) => {
                             newUser.password = hash;
                             newUser.save()
                                 .then(user => {
-                                    res.redirect("http://localhost:3000/login");
+                                    res.send("Signup completed!!");
                                 })
                                 .catch(err => console.log(`error in signup -> ${err}`))
                         })

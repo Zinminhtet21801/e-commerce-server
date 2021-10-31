@@ -4,13 +4,29 @@ const session = require("express-session");
 const passport = require("passport");
 const flash = require("connect-flash");
 const LocalStrategy = require("passport-local").Strategy;
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5000;
+// app.options('*', cors());
+// app.use(cors({origin: 'http://localhost:3000/', credentials: true}));
+// var corsOptions = {
+//   origin: 'http://localhost:3000',
+//   optionsSuccessStatus: 200, // For legacy browser support
+  
+// }
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+// app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash())
+app.use(flash());
 passport.serializeUser(function (user, done) {
   done(null, user);
 });
