@@ -1,22 +1,37 @@
 const express = require("express");
+// const cors = require("cors");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
-const flash = require("connect-flash")
 const LocalStrategy = require("passport-local").Strategy;
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//   })
+// );
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Credentials", true)
+  next();
+});
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash())
 passport.serializeUser(function (user, done) {
-  done(null, user);
+  console.log(user.id);
+  done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
-  console.log(id, done.toString());
   User.findById(id, function (err, user) {
     done(err, user);
   });
@@ -62,35 +77,22 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model("user", UserSchema);
 
-// passport.use(new LocalStrategy(function(gmail, password, done){
-//   console.log(gmail);
-//   User.findOne({gmail : gmail},function(err,user){
-//     if(err){
-//       return done(err)
-//     }
-//     if (!user) {
-//       return done(null, false, { message: 'Incorrect username.' });
-//     }
-//     if (!user.validPassword(password)) {
-//       return done(null, false, { message: 'Incorrect password.' });
-//     }
-//     return done(null,user)
-//   })
-// }))
-
 passport.use(
-  new LocalStrategy(function (gmail, password, done) {
-    User.findOne({ gmail: gmail }, function (err, user) {
+  new LocalStrategy(function (username, password, done) {
+    User.findOne({ gmail: username }, function (err, user) {
       if (err) {
         return done(err);
       }
       if (!user) {
-        return done(null, false, { message: "Incorrect Mail" });
+        return done(null, false, "Incorrect Mail");
+        // return done(null, false);
       }
-      if (!(password === user.password)) {
-        return done(null, false, { message: "Incorrect Password" });
+      if (password !== user.password) {
+        return done(null, false, "Incorrect Password");
+        // return done(null, false);
       }
-      return done(null, user, { message: "Signed In Successfully" });
+      return done(null, user, "Signed In Successfully");
+      // return done(null, user);
     });
   })
 );
@@ -134,42 +136,37 @@ app.post("/signup", (req, res) => {
   res.redirect("http://localhost:3000");
 });
 
-// app.post("/login", (req, res) => {
-//   // console.log(req.body);
-//   const { gmail, password } = req.body;
-//   User.findOne({ gmail: gmail }, (err, result) => {
-//     if (!result) {
-//       res.redirect("http://localhost:3000/login");
-//     } else {
-//       if(password === result.password){
-//         res.cookie(`MyAccount`,{gmail : gmail, password : password, maxAge : new Date().getTime() + (24*60*60*1000)} )
-//         res.redirect("http://localhost:3000");
-//       }else{
-//         res.redirect("http://localhost:3000/login");
-//       }
-//     }
-//   });
-// });
-
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    failureRedirect: "http://localhost:3000/login",
-    successRedirect: "http://localhost:3000/",
-    failureFlash: true,
-    successFlash : "Welcome"
-  })
-);
-
-// app.get('/flash', function(req, res){
-//   // Set a flash message by passing the key, followed by the value, to req.flash().
-//   req.flash('info', 'Flash is back!')
-//   res.redirect('/');
-// });
-
-// app.get("/",function(req,res){
-//   res.send(req.flash("message"))
-// })
+app.post("/login", (req, res, next) => {
+  console.log(req.body);
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      console.log(err);
+      throw err;
+    }
+    if (info.includes("Mail")) {
+      console.log("mail");
+      res.send("error|Incorrect Mail!");
+      return ;
+    } else if (info.includes("Password")) {
+      console.log("password");
+      res.send("error|Incorrect Password!");
+      return ;
+    }
+    if (!user) {
+      res.send("No user exists");
+      return ;
+    } else {
+      req.logIn(user, (err) => {
+        if (err) {
+          console.log(err);
+          throw err;
+        }
+        // console.log(req.user);
+        res.send("Success|Login Successful!");
+      });
+    }
+  })(req, res, next);
+});
 
 app.listen(PORT, (e) => {
   e
