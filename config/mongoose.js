@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 mongoose.connect(
-    "mongodb+srv://admin:admin@e-commerce.13she.mongodb.net/e-commercedb"
+    process.env.MONGODB_URI
 );
   
   const UserSchema = new mongoose.Schema({
