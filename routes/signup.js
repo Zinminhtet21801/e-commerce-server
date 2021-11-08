@@ -35,7 +35,7 @@ router.post('/', (req, res) => {
                 // user exists
                 if(user) {
                     // res.redirect('http://localhost:3000/signup');
-                    res.send("testing user already exists!!!");
+                    res.send("error|user already exists!!!");
                 } else {
                     // user doesn't exist and creating new one
                     bcrypt.genSalt(10, (err, salt) => {
@@ -44,7 +44,7 @@ router.post('/', (req, res) => {
                             newUser.password = hash;
                             newUser.save()
                                 .then(user => {
-                                    res.send("Success|Signup completed!!");
+                                    res.send("success|Signup completed!!");
                                 })
                                 .catch(err => console.log(`error in signup -> ${err}`))
                         })

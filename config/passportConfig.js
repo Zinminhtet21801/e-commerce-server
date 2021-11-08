@@ -23,11 +23,12 @@ module.exports = function (passport){
       );
 
       passport.serializeUser(function (user, done) {
-        console.log(user.id);
+        // console.log(user.id);
         done(null, user.id);
       });
       
       passport.deserializeUser(function (id, done) {
+        // console.log(id);
         User.findById(id, function (err, user) {
           done(err, user);
         });
