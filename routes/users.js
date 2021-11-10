@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
 
 router.get("/session", (req, res) => {
   console.log(req.user);
-  res.send(req.user && req.user.name)
+  res.send(req.user)
 });
 
 router.get("/:name", (req, res) => {
@@ -23,7 +23,7 @@ router.get("/:name", (req, res) => {
 router.get("/cookie/:cookie", (req, res) => {
   const cookie = req.params.cookie;
     User.findOne({ _id: cookie }, (err, result) => {
-      res.send(result ? result.name : "");
+      res.send(result ? result : "");
     });
 });
 

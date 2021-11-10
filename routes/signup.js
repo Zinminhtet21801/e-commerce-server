@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = require("express").Router();
 const User = require('../config/mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -27,7 +26,7 @@ router.post('/', (req, res) => {
 
     // check validation
     if(password !== comfirmPassword && phone.length != 11) {
-        res.send("Error| Something Went Wrong.");
+        res.send("error|passwords don't match")
     } else {
         // validated, check user already exists
         User.findOne({gmail: gmail})
@@ -35,7 +34,7 @@ router.post('/', (req, res) => {
                 // user exists
                 if(user) {
                     // res.redirect('http://localhost:3000/signup');
-                    res.send("error|user already exists!!!");
+                    res.send("error|User already exists!!!");
                 } else {
                     // user doesn't exist and creating new one
                     bcrypt.genSalt(10, (err, salt) => {
@@ -54,4 +53,4 @@ router.post('/', (req, res) => {
     }
 })
 
-module.exports = router; 
+module.exports = router;

@@ -1,12 +1,10 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
 // const User = require("../config/mongoose")
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const salt = bcrypt.genSaltSync(10);
-const cookie = require("cookie");
 
-router.post("/login", (req, res, next) => {
+router.post("/", (req, res, next) => {
   const { rememberMe } = req.body;
   passport.authenticate("local", (err, user, info) => {
     if (err) {
