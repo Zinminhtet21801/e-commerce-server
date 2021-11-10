@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
@@ -31,7 +32,7 @@ app.use("/users", require("./routes/users"));
 app.use("/logout", require("./routes/logout"));
 
 mongoose.connect(
-  "mongodb+srv://admin:admin@e-commerce.13she.mongodb.net/e-commercedb"
+  process.env.MONGODB_URI
 );
 
 const User = require("./config/mongoose");
