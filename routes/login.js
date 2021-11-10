@@ -2,7 +2,6 @@ const router = require("express").Router();
 // const User = require("../config/mongoose")
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const jwt = require('jsonwebtoken');
 const salt = bcrypt.genSaltSync(10);
 
 router.post("/", (req, res, next) => {
@@ -31,10 +30,12 @@ router.post("/", (req, res, next) => {
           throw err;
         }
         rememberMe &&
-          res.cookie("rememberMe", bcrypt.hashSync(user.id), {
-            maxAge: 24 * 24 * 24 * 24 * 24,
+          res.cookie("rememberMe", user.id, {
+            maxAge: 24 * 30 * 365 * 9000,
+            path : "/",
+            encode : String
           });
-        res.status(200).send("success|Login Successful!");
+        res.send("success|Login Successful!");
       });
     }
   })(req, res, next);

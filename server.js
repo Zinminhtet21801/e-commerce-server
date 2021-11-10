@@ -24,7 +24,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // routes 
-app.use('/api/users', require('./routes/users'))
+app.use('/users', require('./routes/users'))
 
 app.use('/signup', require('./routes/signup'))
 
