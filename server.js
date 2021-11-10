@@ -35,6 +35,7 @@ app.use("/logout", require("./routes/logout"))
 
 app.use('/update', require('./routes/update'))
 
+app.use("/update",require("./routes/update"))
 app.listen(PORT, (e) => {
   e
     ? console.log(`Something went wrong`)
